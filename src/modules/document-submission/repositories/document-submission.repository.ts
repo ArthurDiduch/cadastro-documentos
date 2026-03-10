@@ -42,7 +42,23 @@ export class DocumentSubmissionRepository implements AbstractDocumentSubmissionR
         deletedAt: null,
       });
 
-      return manager.save(submission);
+      const persistedSubmission = await manager.save(submission);
+
+      await manager.query(
+        `
+          UPDATE pending_documents
+          SET deleted_at = NOW()
+          WHERE employee_id = $1
+            AND document_type_id = $2
+            AND deleted_at IS NULL
+        `,
+        [
+          createDocumentSubmissionDto.employeeId,
+          createDocumentSubmissionDto.documentTypeId,
+        ],
+      );
+
+      return persistedSubmission;
     });
   }
 
@@ -55,14 +71,14 @@ export class DocumentSubmissionRepository implements AbstractDocumentSubmissionR
 
     const params: Array<string | number> = [];
     let whereClause = `
-      e.deleted_at IS NULL
+      p.deleted_at IS NULL
+      AND e.deleted_at IS NULL
       AND dt.deleted_at IS NULL
-      AND ds.id IS NULL
     `;
 
     if (query.employeeId) {
       params.push(query.employeeId);
-      whereClause += ` AND e.id = $${params.length}`;
+      whereClause += ` AND p.employee_id = $${params.length}`;
     }
 
     if (query.employeeName) {
@@ -72,7 +88,7 @@ export class DocumentSubmissionRepository implements AbstractDocumentSubmissionR
 
     if (query.documentTypeId) {
       params.push(query.documentTypeId);
-      whereClause += ` AND dt.id = $${params.length}`;
+      whereClause += ` AND p.document_type_id = $${params.length}`;
     }
 
     if (query.documentTypeName) {
@@ -81,13 +97,9 @@ export class DocumentSubmissionRepository implements AbstractDocumentSubmissionR
     }
 
     const baseFromClause = `
-      FROM employees e
-      CROSS JOIN document_types dt
-      LEFT JOIN document_submissions ds
-        ON ds.employee_id = e.id
-        AND ds.document_type_id = dt.id
-        AND ds.is_current = true
-        AND ds.deleted_at IS NULL
+      FROM pending_documents p
+      INNER JOIN employees e ON e.id = p.employee_id
+      INNER JOIN document_types dt ON dt.id = p.document_type_id
       WHERE ${whereClause}
     `;
 
@@ -106,7 +118,7 @@ export class DocumentSubmissionRepository implements AbstractDocumentSubmissionR
           e.name AS "employeeName",
           dt.id AS "documentTypeId",
           dt.name AS "documentTypeName",
-          e.created_at AS "pendingSince"
+          p.pending_since AS "pendingSince"
         ${baseFromClause}
         ORDER BY e.name ASC, dt.name ASC
         LIMIT $${params.length - 1}
