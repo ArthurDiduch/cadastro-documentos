@@ -8,6 +8,7 @@ import { DocumentSubmissionModule } from './modules/document-submission/document
 import { DocumentTypeModule } from './modules/document-type/document-type.module';
 import { EmployeeDocumentTypeModule } from './modules/employee-document-type/employee-document-type.module';
 import { EmployeeModule } from './modules/employee/employee.module';
+import { StatisticsModule } from './modules/statistics/statistics.module';
 import { ApplicationErrorFilter } from './shared/filters/application-error.filter';
 
 @Module({
@@ -24,6 +25,7 @@ import { ApplicationErrorFilter } from './shared/filters/application-error.filte
     DocumentTypeModule,
     DocumentSubmissionModule,
     EmployeeDocumentTypeModule,
+    StatisticsModule,
   ],
   providers: [
     {
