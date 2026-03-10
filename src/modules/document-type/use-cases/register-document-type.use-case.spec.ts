@@ -1,6 +1,6 @@
-import { AbstractDocumentTypeRepository } from '../repositories/document-type.repository.abstract';
 import { DocumentTypeNameAlreadyExistsError } from '../errors/document-type-name-already-exists.error';
 import { DocumentTypeEntityInterface } from '../interfaces/document-type-entity.interface';
+import { AbstractDocumentTypeRepository } from '../repositories/document-type.repository.abstract';
 import { RegisterDocumentTypeUseCase } from './register-document-type.use-case';
 
 type DocumentTypeRepositoryMock = {
