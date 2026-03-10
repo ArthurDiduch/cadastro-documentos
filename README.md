@@ -11,7 +11,9 @@ API RESTful em Node.js + TypeScript (NestJS) para gerenciamento de documentaçã
 - PostgreSQL
 - Swagger (`/docs` em ambiente nao-producao)
 
-## Modulo Implementado (Employee)
+## Modulos Implementados
+
+### Employee
 
 Endpoints disponiveis:
 
@@ -21,6 +23,24 @@ Endpoints disponiveis:
 - `PATCH /employees/:id` - atualiza colaborador ativo
 - `DELETE /employees/:id` - soft delete
 - `PATCH /employees/:id/reactivate` - reativa colaborador removido logicamente
+
+### Document Type
+
+Endpoints disponiveis:
+
+- `POST /document-types` - cadastra tipo de documento
+- `GET /document-types/:id` - busca tipo de documento por id
+- `GET /document-types` - lista paginada com filtros
+- `PATCH /document-types/:id` - atualiza tipo de documento ativo
+- `DELETE /document-types/:id` - soft delete
+- `PATCH /document-types/:id/reactivate` - reativa tipo de documento removido logicamente
+
+### Document Submission
+
+Endpoints disponiveis:
+
+- `POST /document-submissions` - envio logico de documento com versionamento
+- `GET /document-submissions/pending` - lista documentos pendentes com paginacao e filtros
 
 ### Regras aplicadas no modulo
 
@@ -45,6 +65,42 @@ Exemplo:
 ```bash
 curl "http://localhost:3000/employees?page=1&limit=10&name=arthur&isActive=true"
 ```
+
+## Filtros de listagem (`GET /document-submissions/pending`)
+
+Query params suportados:
+
+- `page` (default `1`)
+- `limit` (default `10`, max `100`)
+- `employeeId` (UUID exato)
+- `employeeName` (contains, case-insensitive)
+- `documentTypeId` (UUID exato)
+- `documentTypeName` (contains, case-insensitive)
+
+Exemplo:
+
+```bash
+curl "http://localhost:3000/document-submissions/pending?page=1&limit=10&employeeName=arthur&documentTypeName=rg"
+```
+
+## Envio logico de documento (`POST /document-submissions`)
+
+Exemplo de payload:
+
+```json
+{
+  "employeeId": "e7d0f8fd-d6a8-4d2d-8add-f55ea8c2e973",
+  "documentTypeId": "09f10f9e-c13a-4c1b-a84d-559d371f040b",
+  "fileName": "rg-frente.pdf",
+  "fileReference": "s3://bucket/documents/employee-1/rg-v1.pdf"
+}
+```
+
+Regras aplicadas:
+
+- Cada novo envio cria uma nova versao
+- Apenas uma versao fica ativa (`isCurrent = true`) por colaborador + tipo de documento
+- A troca de versao e feita em transacao
 
 ## Estrutura de erro
 
@@ -140,5 +196,5 @@ pnpm test:cov
 
 ## Observacoes
 
-- O projeto esta com foco inicial no modulo `employee`.
-- Proximos modulos (tipos de documento, vinculacoes, historico/versionamento e estatisticas) podem reaproveitar o mesmo padrao de arquitetura.
+- Modulos `employee`, `document-type` e `document-submission` seguem o mesmo padrao de arquitetura.
+- Ainda falta implementar vinculacao explicita colaborador <-> tipo de documento e estatisticas gerais.
