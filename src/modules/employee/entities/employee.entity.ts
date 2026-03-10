@@ -1,5 +1,6 @@
 import { TimestampedEntity } from 'src/shared/entities/timestamped-entity';
-import { Column, DeleteDateColumn, Entity } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, OneToMany } from 'typeorm';
+import { DocumentSubmissionEntity } from '../../document-submission/entities/document-submission.entity';
 import { EmployeeEntityInterface } from '../interfaces/employee-entity.interface';
 
 @Entity('employees')
@@ -7,6 +8,12 @@ export class EmployeeEntity
   extends TimestampedEntity
   implements EmployeeEntityInterface
 {
+  @OneToMany(
+    () => DocumentSubmissionEntity,
+    (documentSubmission) => documentSubmission.employee,
+  )
+  documentSubmissions!: DocumentSubmissionEntity[];
+
   @Column()
   name!: string;
 
