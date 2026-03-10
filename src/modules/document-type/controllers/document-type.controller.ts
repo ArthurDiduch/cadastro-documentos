@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -92,7 +93,7 @@ export class DocumentTypeController {
     description: 'Document type not found.',
   })
   async getOne(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Query('includeInactive') includeInactive?: string,
   ): Promise<DocumentTypeOutputDto> {
     return this.findDocumentTypeByIdUseCase.execute(
@@ -139,7 +140,7 @@ export class DocumentTypeController {
     description: 'Document type name already exists.',
   })
   async update(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateDocumentTypeDto: UpdateDocumentTypeDto,
   ): Promise<DocumentTypeOutputDto> {
     return this.updateDocumentTypeUseCase.execute(id, updateDocumentTypeDto);
@@ -154,7 +155,9 @@ export class DocumentTypeController {
     type: ErrorResponseDto,
     description: 'Document type not found.',
   })
-  async softDelete(@Param('id') id: string): Promise<void> {
+  async softDelete(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<void> {
     await this.softDeleteDocumentTypeUseCase.execute(id);
   }
 
@@ -174,7 +177,9 @@ export class DocumentTypeController {
     type: ErrorResponseDto,
     description: 'Document type name already exists.',
   })
-  async reactivate(@Param('id') id: string): Promise<DocumentTypeOutputDto> {
+  async reactivate(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<DocumentTypeOutputDto> {
     return this.reactivateDocumentTypeUseCase.execute(id);
   }
 }

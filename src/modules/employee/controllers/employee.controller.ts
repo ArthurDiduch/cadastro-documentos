@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -93,7 +94,7 @@ export class EmployeeController {
     description: 'Employee not found.',
   })
   async getOne(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Query('includeInactive') includeInactive?: string,
   ): Promise<EmployeeOutputDto> {
     return this.findEmployeeByIdUseCase.execute(id, includeInactive === 'true');
@@ -134,7 +135,7 @@ export class EmployeeController {
     description: 'Employee email or registration already exists.',
   })
   async update(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ): Promise<EmployeeOutputDto> {
     return this.updateEmployeeUseCase.execute(id, updateEmployeeDto);
@@ -149,7 +150,9 @@ export class EmployeeController {
     type: ErrorResponseDto,
     description: 'Employee not found.',
   })
-  async softDelete(@Param('id') id: string): Promise<void> {
+  async softDelete(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<void> {
     await this.softDeleteEmployeeUseCase.execute(id);
   }
 
@@ -169,7 +172,9 @@ export class EmployeeController {
     type: ErrorResponseDto,
     description: 'Employee email or registration already exists.',
   })
-  async reactivate(@Param('id') id: string): Promise<EmployeeOutputDto> {
+  async reactivate(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<EmployeeOutputDto> {
     return this.reactivateEmployeeUseCase.execute(id);
   }
 }
