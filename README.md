@@ -42,6 +42,13 @@ Endpoints disponiveis:
 - `POST /document-submissions` - envio logico de documento com versionamento
 - `GET /document-submissions/pending` - lista documentos pendentes com paginacao e filtros
 
+### Employee Document Type
+
+Endpoints disponiveis:
+
+- `POST /employee-document-types` - vincula colaborador a tipo de documento (atomico)
+- `DELETE /employee-document-types` - desvincula colaborador de tipo de documento (atomico)
+
 ### Regras aplicadas no modulo
 
 - Unicidade de `email` e `registration`
@@ -101,6 +108,24 @@ Regras aplicadas:
 - Cada novo envio cria uma nova versao
 - Apenas uma versao fica ativa (`isCurrent = true`) por colaborador + tipo de documento
 - A troca de versao e feita em transacao
+- Ao enviar uma nova versao, a pendencia do vinculo e fechada no mesmo fluxo transacional
+
+## Vinculacao atomica (`POST/DELETE /employee-document-types`)
+
+Exemplo de payload:
+
+```json
+{
+  "employeeId": "e7d0f8fd-d6a8-4d2d-8add-f55ea8c2e973",
+  "documentTypeId": "09f10f9e-c13a-4c1b-a84d-559d371f040b"
+}
+```
+
+Regras aplicadas:
+
+- Ao vincular, o sistema cria/reativa a pendencia de forma atomica
+- Ao desvincular, o sistema fecha (soft delete) o vinculo e a pendencia no mesmo fluxo atomico
+- A listagem de pendencias considera somente os registros ativos de `pending_documents`
 
 ## Estrutura de erro
 
@@ -196,5 +221,5 @@ pnpm test:cov
 
 ## Observacoes
 
-- Modulos `employee`, `document-type` e `document-submission` seguem o mesmo padrao de arquitetura.
-- Ainda falta implementar vinculacao explicita colaborador <-> tipo de documento e estatisticas gerais.
+- Modulos `employee`, `document-type`, `document-submission` e `employee-document-type` seguem o mesmo padrao de arquitetura.
+- Ainda falta implementar estatisticas gerais.
