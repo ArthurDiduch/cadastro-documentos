@@ -49,6 +49,12 @@ Endpoints disponiveis:
 - `POST /employee-document-types` - vincula colaborador a tipo de documento (atomico)
 - `DELETE /employee-document-types` - desvincula colaborador de tipo de documento (atomico)
 
+### Statistics
+
+Endpoints disponiveis:
+
+- `GET /statistics/overview` - visao geral com percentual de documentacao completa, documentos mais pendentes e ultimos envios
+
 ### Regras aplicadas no modulo
 
 - Unicidade de `email` e `registration`
@@ -126,6 +132,25 @@ Regras aplicadas:
 - Ao vincular, o sistema cria/reativa a pendencia de forma atomica
 - Ao desvincular, o sistema fecha (soft delete) o vinculo e a pendencia no mesmo fluxo atomico
 - A listagem de pendencias considera somente os registros ativos de `pending_documents`
+
+## Estatisticas gerais (`GET /statistics/overview`)
+
+Query params suportados:
+
+- `topPendingLimit` (default `5`, max `20`)
+- `latestSubmissionsLimit` (default `10`, max `50`)
+
+Exemplo:
+
+```bash
+curl "http://localhost:3000/statistics/overview?topPendingLimit=5&latestSubmissionsLimit=10"
+```
+
+Retorna:
+
+- `% de documentacao completa`
+- `documentos mais frequentemente pendentes`
+- `ultimos envios`
 
 ## Estrutura de erro
 
@@ -222,4 +247,4 @@ pnpm test:cov
 ## Observacoes
 
 - Modulos `employee`, `document-type`, `document-submission` e `employee-document-type` seguem o mesmo padrao de arquitetura.
-- Ainda falta implementar estatisticas gerais.
+- Modulo `statistics` implementado para visao geral operacional.
