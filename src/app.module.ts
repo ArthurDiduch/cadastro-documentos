@@ -6,6 +6,7 @@ import pgDatabaseConfig from './configurations/pg-database.config';
 import { PgTypeOrmConfigService } from './configurations/pg-typeorm-config.service';
 import { DocumentSubmissionModule } from './modules/document-submission/document-submission.module';
 import { DocumentTypeModule } from './modules/document-type/document-type.module';
+import { EmployeeDocumentTypeModule } from './modules/employee-document-type/employee-document-type.module';
 import { EmployeeModule } from './modules/employee/employee.module';
 import { ApplicationErrorFilter } from './shared/filters/application-error.filter';
 
@@ -22,6 +23,7 @@ import { ApplicationErrorFilter } from './shared/filters/application-error.filte
     EmployeeModule,
     DocumentTypeModule,
     DocumentSubmissionModule,
+    EmployeeDocumentTypeModule,
   ],
   providers: [
     {

@@ -7,6 +7,8 @@ import {
 import { Request, Response } from 'express';
 import { DocumentTypeNameAlreadyExistsError } from 'src/modules/document-type/errors/document-type-name-already-exists.error';
 import { DocumentTypeNotFoundError } from 'src/modules/document-type/errors/document-type-not-found.error';
+import { EmployeeDocumentTypeAlreadyLinkedError } from 'src/modules/employee-document-type/errors/employee-document-type-already-linked.error';
+import { EmployeeDocumentTypeLinkNotFoundError } from 'src/modules/employee-document-type/errors/employee-document-type-link-not-found.error';
 import { EmployeeEmailAlreadyExistsError } from 'src/modules/employee/errors/employee-email-already-exists.error';
 import { EmployeeNotFoundError } from 'src/modules/employee/errors/employee-not-found.error';
 import { EmployeeRegistrationAlreadyExistsError } from 'src/modules/employee/errors/employee-registration-already-exists.error';
@@ -33,14 +35,16 @@ export class ApplicationErrorFilter implements ExceptionFilter {
     if (
       exception instanceof EmployeeEmailAlreadyExistsError ||
       exception instanceof EmployeeRegistrationAlreadyExistsError ||
-      exception instanceof DocumentTypeNameAlreadyExistsError
+      exception instanceof DocumentTypeNameAlreadyExistsError ||
+      exception instanceof EmployeeDocumentTypeAlreadyLinkedError
     ) {
       return HttpStatus.CONFLICT;
     }
 
     if (
       exception instanceof EmployeeNotFoundError ||
-      exception instanceof DocumentTypeNotFoundError
+      exception instanceof DocumentTypeNotFoundError ||
+      exception instanceof EmployeeDocumentTypeLinkNotFoundError
     ) {
       return HttpStatus.NOT_FOUND;
     }
