@@ -2,11 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DocumentSubmissionEntity } from '../document-submission/entities/document-submission.entity';
 import { DocumentTypeEntity } from '../document-type/entities/document-type.entity';
-import { DocumentTypeRepository } from '../document-type/repositories/document-type.repository';
-import { AbstractDocumentTypeRepository } from '../document-type/repositories/document-type.repository.abstract';
+import { DocumentTypePersistenceModule } from '../document-type/document-type-persistence.module';
 import { EmployeeEntity } from '../employee/entities/employee.entity';
-import { EmployeeRepository } from '../employee/repositories/employee.repository';
-import { AbstractEmployeeRepository } from '../employee/repositories/employee.repository.abstract';
+import { EmployeePersistenceModule } from '../employee/employee-persistence.module';
 import { EmployeeDocumentTypeController } from './controllers/employee-document-type.controller';
 import { EmployeeDocumentTypeEntity } from './entities/employee-document-type.entity';
 import { PendingDocumentEntity } from './entities/pending-document.entity';
@@ -17,6 +15,8 @@ import { UnlinkEmployeeDocumentTypeUseCase } from './use-cases/unlink-employee-d
 
 @Module({
   imports: [
+    EmployeePersistenceModule,
+    DocumentTypePersistenceModule,
     TypeOrmModule.forFeature([
       EmployeeDocumentTypeEntity,
       PendingDocumentEntity,
@@ -27,14 +27,6 @@ import { UnlinkEmployeeDocumentTypeUseCase } from './use-cases/unlink-employee-d
   ],
   controllers: [EmployeeDocumentTypeController],
   providers: [
-    {
-      provide: AbstractEmployeeRepository,
-      useClass: EmployeeRepository,
-    },
-    {
-      provide: AbstractDocumentTypeRepository,
-      useClass: DocumentTypeRepository,
-    },
     {
       provide: AbstractEmployeeDocumentTypeRepository,
       useClass: EmployeeDocumentTypeRepository,

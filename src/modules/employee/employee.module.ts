@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeeController } from './controllers/employee.controller';
-import { EmployeeEntity } from './entities/employee.entity';
-import { EmployeeRepository } from './repositories/employee.repository';
-import { AbstractEmployeeRepository } from './repositories/employee.repository.abstract';
+import { EmployeePersistenceModule } from './employee-persistence.module';
 import { FindEmployeeByIdUseCase } from './use-cases/find-employee-by-id.use-case';
 import { ListEmployeesUseCase } from './use-cases/list-employees.use-case';
 import { ReactivateEmployeeUseCase } from './use-cases/reactivate-employee.use-case';
@@ -12,13 +9,9 @@ import { SoftDeleteEmployeeUseCase } from './use-cases/soft-delete-employee.use-
 import { UpdateEmployeeUseCase } from './use-cases/update-employee.use-case';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([EmployeeEntity])],
+  imports: [EmployeePersistenceModule],
   controllers: [EmployeeController],
   providers: [
-    {
-      provide: AbstractEmployeeRepository,
-      useClass: EmployeeRepository,
-    },
     RegisterEmployeeUseCase,
     FindEmployeeByIdUseCase,
     ListEmployeesUseCase,
